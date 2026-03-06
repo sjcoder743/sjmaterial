@@ -1,40 +1,31 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import ProductCard from "@/components/ui/ProductCard";
-import type { Product } from "@/types/product";
+import { connectDB } from "@/lib/db";
+import { toPlainObject } from "@/lib/serialize";
+import Product from "@/models/Product";
+import { Product as ProductType } from "@/types/product";
 
-export default function Featured() {
-  const [products, setProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) =>
-        setProducts(data.filter((p: Product) => p.featured))
-      );
-  }, []);
+export default async function Featured() {
+  let products: ProductType[] = [];
+  try {
+    await connectDB();
+    const featured = await Product.find({ featured: true }).sort({ createdAt: -1 }).limit(4).lean();
+    products = toPlainObject(featured) as ProductType[];
+  } catch {
+    products = [];
+  }
 
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.8 }}
-      className="pt-16 pb-24 max-w-6xl w-full mx-auto px-6"
-    >
-      <h2 className="text-3xl font-semibold mb-10 text-center">
-        Featured Products
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
+      <div className="mb-8 flex items-center justify-between">
+        <h2 className="text-2xl font-bold md:text-3xl">Featured Products</h2>
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {products.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}
-
       </div>
-
-    </motion.section>
+    </section>
   );
 }

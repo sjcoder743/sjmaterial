@@ -1,64 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import type { Product } from "@/types/product";
+import { useState } from "react";
+import { Product } from "@/types/product";
+import AddToCartButton from "@/components/ui/AddToCartButton";
 
-interface Props {
-  product: Product;
-}
-
-export default function ProductCard({ product }: Props) {
-  const [currentImage, setCurrentImage] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-
-  useEffect(() => {
-    if (!isHovered || product.images.length <= 1) {
-      setCurrentImage(0);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setCurrentImage((prev) =>
-        prev === product.images.length - 1 ? 0 : prev + 1
-      );
-    }, 1500);
-
-    return () => clearInterval(interval);
-  }, [isHovered, product.images.length]);
+export default function ProductCard({ product }: { product: Product }) {
+  const [activeImage, setActiveImage] = useState(0);
 
   return (
-    <Link href={`/products/${product._id}`}>
-      <motion.div
-        whileHover={{ scale: 1.03 }}
-        transition={{ duration: 0.3 }}
-        className="card p-6 text-center cursor-pointer"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+    <motion.article whileHover={{ y: -6 }} className="rounded-2xl border border-slate-800 bg-slate-950 p-4">
+      <Link
+        href={`/products/${product._id}`}
+        onMouseEnter={() => setActiveImage(product.images[1] ? 1 : 0)}
+        onMouseLeave={() => setActiveImage(0)}
       >
-        <div className="h-40 bg-[#222] rounded-xl mb-4 overflow-hidden flex items-center justify-center">
+        <div className="mb-4 h-48 overflow-hidden rounded-xl bg-slate-900">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={product.images[currentImage]}
+            src={product.images[activeImage] || "/placeholder.png"}
             alt={product.name}
-            className="h-full object-cover transition-all duration-500"
+            className="h-full w-full object-cover"
           />
         </div>
-
-        <h3 className="text-lg font-medium">{product.name}</h3>
-
-        <p className="text-gray-400 text-sm mt-2">
-          {product.description}
-        </p>
-
-        <p className="mt-4 text-blue-500 font-semibold">
-          ₹{product.price}
-        </p>
-
-        <button className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm">
-          Add to Cart
-        </button>
-      </motion.div>
-    </Link>
+        <h3 className="text-lg font-semibold">{product.name}</h3>
+        <p className="mt-2 line-clamp-2 text-sm text-slate-400">{product.description}</p>
+      </Link>
+      <div className="mt-4 flex items-center justify-between gap-2">
+        <p className="text-lg font-bold text-[#2563EB]">₹{product.price.toLocaleString()}</p>
+        <AddToCartButton product={product} />
+      </div>
+    </motion.article>
   );
 }
