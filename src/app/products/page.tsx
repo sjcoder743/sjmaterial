@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import ProductCard from "@/components/ui/ProductCard";
 import { connectDB } from "@/lib/db";
+import { mockProducts } from "@/lib/mockProducts";
 import { buildProductQuery, getProductCategories } from "@/lib/products";
 import { toPlainObject } from "@/lib/serialize";
 import Product from "@/models/Product";
@@ -31,6 +32,7 @@ export default async function ProductsPage({
   let products: ProductType[] = [];
   let total = 0;
   let categories: string[] = [];
+  let dbWarning = "";
 
   try {
     await connectDB();
@@ -47,14 +49,25 @@ export default async function ProductsPage({
     products = toPlainObject(rawProducts) as ProductType[];
     total = count;
     categories = availableCategories;
-  } catch {
-    products = [];
+  } catch (error) {
+    products = mockProducts;
+    total = mockProducts.length;
+    categories = [...new Set(mockProducts.map((item) => item.category))];
+    dbWarning =
+      error instanceof Error
+        ? `Database unavailable (${error.message}). Showing sample products.`
+        : "Database unavailable. Showing sample products.";
   }
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-10 md:px-8">
+      {dbWarning && (
+        <p className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+          {dbWarning}
+        </p>
+      )}
       <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-950 p-4 md:flex-row md:items-center">
         <form className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-4">
           <input

@@ -57,6 +57,13 @@ npm run dev
 curl http://localhost:3000/api/seed
 ```
 
+
+## Common Local Issues
+
+- **`/categories` returns 404**: pull latest changes and restart dev server; `/categories` page now exists.
+- **MongoDB Atlas connection fails / whitelist error**: add your current IP in Atlas **Network Access** and verify `MONGODB_URI` in `.env.local`.
+- If DB is unavailable, the app now shows fallback sample products so you can still preview the UI.
+
 ## Deployment Guide
 
 1. Deploy to Vercel (recommended) or any Node.js platform.

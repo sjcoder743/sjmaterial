@@ -28,8 +28,17 @@ export async function connectDB() {
     cache.promise = mongoose
       .connect(MONGODB_URI, {
         bufferCommands: false,
+        serverSelectionTimeoutMS: 5000,
       })
-      .then((connection) => connection);
+      .then((connection) => connection)
+      .catch((error: unknown) => {
+        cache.promise = null;
+        const message =
+          error instanceof Error
+            ? `${error.message}. If you use MongoDB Atlas, whitelist your current IP in Atlas Network Access.`
+            : "Unknown MongoDB connection error";
+        throw new Error(message);
+      });
   }
 
   cache.conn = await cache.promise;

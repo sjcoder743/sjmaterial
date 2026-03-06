@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import ProductCard from "@/components/ui/ProductCard";
 import { connectDB } from "@/lib/db";
+import { mockProducts } from "@/lib/mockProducts";
 import { toPlainObject } from "@/lib/serialize";
 import Product from "@/models/Product";
 import { Product as ProductType } from "@/types/product";
@@ -13,7 +14,7 @@ export default async function Featured() {
     const featured = await Product.find({ featured: true }).sort({ createdAt: -1 }).limit(4).lean();
     products = toPlainObject(featured) as ProductType[];
   } catch {
-    products = [];
+    products = mockProducts.filter((item) => item.featured).slice(0, 4);
   }
 
   return (
