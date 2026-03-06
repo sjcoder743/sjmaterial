@@ -1,25 +1,46 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI;
+declare global {
+  var mongooseCache:
+    | {
+        conn: typeof mongoose | null;
+        promise: Promise<typeof mongoose> | null;
+      }
+    | undefined;
+}
 
-export const connectDB = async () => {
-  // 1. Check if we have a connection URI
+const cache =
+  global.mongooseCache ??
+  (global.mongooseCache = {
+    conn: null,
+    promise: null,
+  });
+
+export async function connectDB() {
+  const MONGODB_URI = process.env.MONGODB_URI;
   if (!MONGODB_URI) {
-    throw new Error("Please define the MONGODB_URI environment variable");
+    throw new Error("Please define MONGODB_URI in your environment variables");
   }
 
-  // 2. Check if already connected (0 = disconnected, 1 = connected, 2 = connecting)
-  if (mongoose.connection.readyState >= 1) {
-    console.log("Using existing MongoDB connection");
-    return;
+  if (cache.conn) return cache.conn;
+
+  if (!cache.promise) {
+    cache.promise = mongoose
+      .connect(MONGODB_URI, {
+        bufferCommands: false,
+        serverSelectionTimeoutMS: 5000,
+      })
+      .then((connection) => connection)
+      .catch((error: unknown) => {
+        cache.promise = null;
+        const message =
+          error instanceof Error
+            ? `${error.message}. If you use MongoDB Atlas, whitelist your current IP in Atlas Network Access.`
+            : "Unknown MongoDB connection error";
+        throw new Error(message);
+      });
   }
 
-  try {
-    // 3. Attempt the connection
-    await mongoose.connect(MONGODB_URI);
-    console.log("MongoDB connected successfully");
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-    throw error;
-  }
-};
+  cache.conn = await cache.promise;
+  return cache.conn;
+}

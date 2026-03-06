@@ -5,34 +5,37 @@ import Product from "@/models/Product";
 export async function GET() {
   await connectDB();
 
-  await Product.deleteMany({}); // reset old data
+  await Product.deleteMany({});
 
   const products = await Product.insertMany([
     {
-      name: "Premium Bottle",
-      description: "Durable. Stylish. Everyday essential.",
-      price: 499,
-      images: ["/placeholder.png", "/placeholder.png"],
+      name: "Architect Concrete Panel",
+      description: "Textured premium concrete panel for luxury facade and interiors.",
+      price: 2499,
+      images: ["https://images.unsplash.com/photo-1611486212355-d276af4581c0?w=1200"],
       featured: true,
+      category: "Wall Panels",
+      stock: 24,
     },
     {
-      name: "Fitness Accessory",
-      description: "Built for performance and comfort.",
+      name: "Ceramic Floor Tile",
+      description: "Scratch resistant matte finish tile with premium edge profile.",
       price: 899,
-      images: ["/placeholder.png", "/placeholder.png"],
+      images: ["https://images.unsplash.com/photo-1617104551722-3b2d51366436?w=1200"],
       featured: true,
+      category: "Flooring",
+      stock: 120,
     },
     {
-      name: "Lifestyle Product",
-      description: "Premium design meets practicality.",
-      price: 1299,
-      images: ["/placeholder.png", "/placeholder.png"],
+      name: "Industrial Pendant Light",
+      description: "Minimal pendant with brushed metal body for premium projects.",
+      price: 3599,
+      images: ["https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=1200"],
       featured: false,
+      category: "Lighting",
+      stock: 52,
     },
   ]);
 
-  return NextResponse.json({
-    message: "Database seeded successfully",
-    products,
-  });
+  return NextResponse.json({ message: "Database seeded successfully", products });
 }

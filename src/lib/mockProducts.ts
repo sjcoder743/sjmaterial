@@ -1,0 +1,40 @@
+import { Product } from "@/types/product";
+
+export const mockProducts: Product[] = [
+  {
+    _id: "mock-1",
+    name: "Architect Concrete Panel",
+    description: "Premium textured concrete panel for modern facade and interior projects.",
+    price: 2499,
+    images: ["https://images.unsplash.com/photo-1611486212355-d276af4581c0?w=1200"],
+    featured: true,
+    category: "Wall Panels",
+    stock: 24,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: "mock-2",
+    name: "Matte Ceramic Floor Tile",
+    description: "Scratch-resistant matte tile with precision-cut edges for premium flooring.",
+    price: 899,
+    images: ["https://images.unsplash.com/photo-1617104551722-3b2d51366436?w=1200"],
+    featured: true,
+    category: "Flooring",
+    stock: 120,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: "mock-3",
+    name: "Industrial Pendant Light",
+    description: "Minimal brushed-metal pendant light designed for luxury residential spaces.",
+    price: 3599,
+    images: ["https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=1200"],
+    featured: false,
+    category: "Lighting",
+    stock: 52,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
