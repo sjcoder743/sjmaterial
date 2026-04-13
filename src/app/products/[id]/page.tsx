@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import { notFound } from "next/navigation";
@@ -19,10 +20,12 @@ export default async function ProductDetail({ params }: PageProps) {
     <div className="pt-32 min-h-screen px-6">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
         <div className="bg-[#111] rounded-3xl p-8 flex items-center justify-center border border-[#222] shadow-xl">
-          <img
+          <Image
             src={product.images?.[0] || "/next.svg"}
             alt={product.name}
-            className="max-h-[450px] object-contain"
+            width={540}
+            height={450}
+            className="max-h-[450px] w-auto object-contain"
           />
         </div>
 

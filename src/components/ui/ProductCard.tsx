@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -37,10 +38,12 @@ export default function ProductCard({ product }: Props) {
         }}
       >
         <div className="h-40 bg-[#222] rounded-xl mb-4 overflow-hidden flex items-center justify-center">
-          <img
+          <Image
             src={product.images[currentImage] || "/next.svg"}
             alt={product.name}
-            className="h-full object-cover transition-all duration-500"
+            width={220}
+            height={160}
+            className="h-full w-auto object-cover transition-all duration-500"
           />
         </div>
 
