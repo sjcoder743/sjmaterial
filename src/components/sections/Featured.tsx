@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import ProductCard from "@/components/ui/ProductCard";
@@ -11,9 +12,7 @@ export default function Featured() {
   useEffect(() => {
     fetch("/api/products")
       .then((res) => res.json())
-      .then((data) =>
-        setProducts(data.filter((p: Product) => p.featured))
-      );
+      .then((data) => setProducts(data.filter((p: Product) => p.featured).slice(0, 3)));
   }, []);
 
   return (
@@ -24,17 +23,19 @@ export default function Featured() {
       transition={{ duration: 0.8 }}
       className="pt-16 pb-24 max-w-6xl w-full mx-auto px-6"
     >
-      <h2 className="text-3xl font-semibold mb-10 text-center">
-        Featured Products
-      </h2>
+      <h2 className="text-3xl font-semibold mb-10 text-center">Featured Products</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {products.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}
-
       </div>
 
+      <div className="text-center mt-10">
+        <Link href="/products" className="px-6 py-3 border border-[#2a2a2a] rounded-lg hover:border-blue-500">
+          View Full Catalog
+        </Link>
+      </div>
     </motion.section>
   );
 }
